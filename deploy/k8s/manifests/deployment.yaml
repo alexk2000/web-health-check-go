@@ -1,0 +1,43 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: web-health-check
+  labels:
+    app: web-health-check
+spec:
+  replicas: 1
+  strategy:
+    type: Recreate
+  selector:
+    matchLabels:
+      app: web-health-check
+  template:
+    metadata:
+      labels:
+        app: web-health-check
+    spec:
+      securityContext:
+        runAsUser: 1000
+        runAsGroup: 1000
+        fsGroup: 1000
+      containers:
+      - name: web-health-check
+        image: <path to image>
+        ports:
+        - containerPort: 8080
+        volumeMounts:
+        - name: config-volume
+          mountPath: /home/app/conf
+        - name: data
+          mountPath: /home/app/data
+      volumes:
+        - name: config-volume
+          configMap:
+            name: web-health-check
+            items:
+            - key: config.yml
+              path: config.yml
+        - name: data
+          persistentVolumeClaim:
+            claimName: web-health-check

@@ -1,0 +1,11 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: web-health-check
+spec:
+  selector:
+    app: web-health-check
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 8080
